@@ -1,7 +1,7 @@
 
 import { Message } from "@/types";
 
-const API_KEY = "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"; // Note: In production, use environment variables
+const API_KEY = "gsk_D2yCOn7wqNoUDr3LGy3BWGdyb3FYPq19yV0xbvJwAechzkaYdyBttttttttJttttttttt"; // Note: In production, use environment variables
 
 interface ChatCompletionRequest {
   messages: {
