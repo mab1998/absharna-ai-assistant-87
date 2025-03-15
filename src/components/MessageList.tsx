@@ -1,5 +1,6 @@
 
 import React, { useRef, useEffect } from 'react';
+import { MessageCircle } from 'lucide-react';
 import Message from './Message';
 import { Message as MessageType } from '@/types';
 
