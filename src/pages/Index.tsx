@@ -1,12 +1,27 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '@/components/Header';
 import ChatInterface from '@/components/ChatInterface';
 import { ChatProvider } from '@/context/ChatContext';
 import { ArrowLeft, HelpCircle, MessageSquare, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { quickServices, QuickService } from '@/data/quickServices';
+import QuickServiceModal from '@/components/QuickServiceModal';
+import { useChat } from '@/hooks/useChat';
 
 const Index = () => {
+  const [selectedService, setSelectedService] = useState<QuickService | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  const handleServiceClick = (service: QuickService) => {
+    setSelectedService(service);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <ChatProvider>
       <div className="flex flex-col min-h-screen bg-background">
@@ -37,18 +52,16 @@ const Index = () => {
               <div className="glass-card p-4">
                 <h2 className="font-bold text-lg mb-3">خدمات سريعة</h2>
                 <ul className="space-y-2 text-sm">
-                  <li className="p-2 hover:bg-accent rounded-md cursor-pointer transition-colors">
-                    تجديد رخصة القيادة
-                  </li>
-                  <li className="p-2 hover:bg-accent rounded-md cursor-pointer transition-colors">
-                    تحديث معلومات الإقامة
-                  </li>
-                  <li className="p-2 hover:bg-accent rounded-md cursor-pointer transition-colors">
-                    الاستعلام عن المخالفات المرورية
-                  </li>
-                  <li className="p-2 hover:bg-accent rounded-md cursor-pointer transition-colors">
-                    إصدار تصريح سفر
-                  </li>
+                  {quickServices.map((service) => (
+                    <li 
+                      key={service.id}
+                      className="p-2 hover:bg-accent rounded-md cursor-pointer transition-colors flex items-center"
+                      onClick={() => handleServiceClick(service)}
+                    >
+                      <service.icon className="ml-2 h-4 w-4 text-absher" />
+                      {service.title}
+                    </li>
+                  ))}
                 </ul>
               </div>
               
@@ -75,6 +88,13 @@ const Index = () => {
           </div>
         </footer>
       </div>
+
+      {/* Quick Service Modal */}
+      <QuickServiceModal
+        service={selectedService}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </ChatProvider>
   );
 };

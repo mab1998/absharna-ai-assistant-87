@@ -3,6 +3,7 @@ import React, { createContext, useState, useCallback } from 'react';
 import { ChatContextType, ChatState, Message } from '@/types';
 import { fetchChatCompletion } from '@/services/apiService';
 import { toast } from '@/components/ui/use-toast';
+import { quickServices } from '@/data/quickServices';
 
 // Initial state for the chat
 const initialChatState: ChatState = {
@@ -38,6 +39,24 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
+  // Check if the message matches any predefined scenario
+  const checkForScenarioMatch = (content: string): { matched: boolean; response?: string } => {
+    for (const service of quickServices) {
+      for (const scenario of service.scenario) {
+        if (scenario.userQuestions.some(q => 
+          content.toLowerCase().includes(q.toLowerCase()) || 
+          q.toLowerCase().includes(content.toLowerCase())
+        )) {
+          return { 
+            matched: true, 
+            response: scenario.botResponses[0] 
+          };
+        }
+      }
+    }
+    return { matched: false };
+  };
+
   // Function to send a message
   const sendMessage = useCallback(async (content: string) => {
     if (!content.trim()) return;
@@ -59,11 +78,21 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }));
 
     try {
-      // Get all messages for context
-      const allMessages = [...chatState.messages, userMessage];
+      // Check if this message matches a predefined scenario
+      const scenarioMatch = checkForScenarioMatch(content);
       
-      // Call API to get response
-      const responseContent = await fetchChatCompletion(allMessages);
+      let responseContent = '';
+      
+      if (scenarioMatch.matched && scenarioMatch.response) {
+        // Use the predefined response for this scenario
+        responseContent = scenarioMatch.response;
+      } else {
+        // Get all messages for context
+        const allMessages = [...chatState.messages, userMessage];
+        
+        // Call API to get response
+        responseContent = await fetchChatCompletion(allMessages);
+      }
       
       // Create assistant message from response
       const assistantMessage: Message = {
