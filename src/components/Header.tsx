@@ -1,16 +1,19 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { Link, useLocation } from 'react-router-dom';
 
 interface HeaderProps {
   className?: string;
 }
 
 const Header: React.FC<HeaderProps> = ({ className }) => {
+  const location = useLocation();
+  
   return (
     <header className={cn("p-4 border-b", className)}>
       <div className="container max-w-5xl mx-auto flex items-center justify-between">
-        <div className="flex items-center space-x-2 space-x-reverse">
+        <Link to="/" className="flex items-center space-x-2 space-x-reverse">
           <div className="bg-absher text-white rounded-full p-1.5 w-10 h-10 flex items-center justify-center">
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
@@ -27,18 +30,36 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
             <h1 className="text-2xl font-bold bg-clip-text text-absher">أبشرنا</h1>
             <p className="text-xs text-muted-foreground">المساعد الذكي لمنصة أبشر</p>
           </div>
-        </div>
+        </Link>
 
         <nav className="hidden sm:flex items-center space-x-4 space-x-reverse">
-          <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <Link 
+            to="/about" 
+            className={cn(
+              "text-sm hover:text-foreground transition-colors",
+              location.pathname === "/about" ? "text-foreground font-medium" : "text-muted-foreground"
+            )}
+          >
             عن النظام
-          </a>
-          <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          </Link>
+          <Link 
+            to="/faq" 
+            className={cn(
+              "text-sm hover:text-foreground transition-colors",
+              location.pathname === "/faq" ? "text-foreground font-medium" : "text-muted-foreground"
+            )}
+          >
             الأسئلة الشائعة
-          </a>
-          <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          </Link>
+          <Link 
+            to="/contact" 
+            className={cn(
+              "text-sm hover:text-foreground transition-colors",
+              location.pathname === "/contact" ? "text-foreground font-medium" : "text-muted-foreground"
+            )}
+          >
             التواصل
-          </a>
+          </Link>
         </nav>
       </div>
     </header>
